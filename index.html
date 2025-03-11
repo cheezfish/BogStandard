@@ -1,15 +1,37 @@
 ---
 layout: default
 ---
-<!-- Cards Section -->
-<div class="cards">
-    {% for note in site.notes %}
-        <div class="card">
-            <h2>{{ note.title }}</h2>
-            <p><strong>Location:</strong> {{ note.location | join: ', ' }}</p>
-            <p><strong>Rating:</strong> {{ note.rating }}/5</p>
-            <p><strong>Features:</strong> {{ note.features | join: ', ' }}</p>
-            <p>{{ note.content | markdownify }}</p>
-        </div>
-    {% endfor %}
+<h1>Toilet Reviews</h1>
+
+<!-- Search Bar -->
+<div class="search-bar">
+    <input type="text" id="search-input" placeholder="Search location...">
+    <input type="number" id="radius-input" placeholder="Radius (km)" min="1">
+    <button id="search-button">Search</button>
 </div>
+
+<!-- Map and Cards Container -->
+<div class="container">
+    <!-- Map Section -->
+    <div id="map"></div>
+
+    <!-- Cards Section -->
+    <div class="cards">
+        {% for note in site.notes %}
+            <div class="card" data-location="{{ note.location | join: ',' }}" data-title="{{ note.title }}">
+                <h2>{{ note.title }}</h2>
+                <p><strong>Location:</strong> {{ note.location | join: ', ' }}</p>
+                <p><strong>Rating:</strong> {{ note.rating }}/5</p>
+                <p><strong>Features:</strong> {{ note.features | join: ', ' }}</p>
+                <div class="content">
+                    {{ note.content | markdownify }}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Leaflet.js and Custom Script -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="{{ '/assets/js/map.js' | relative_url }}"></script>
