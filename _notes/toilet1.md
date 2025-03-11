@@ -1,5 +1,5 @@
 ---
-title: "Toilet Review: Central Park"
+title: "Central Park"
 location: [40.785091, -73.968285]
 rating: 4.5
 features: ["Clean", "Handicap Accessible", "Free"]
