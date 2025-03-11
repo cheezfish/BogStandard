@@ -1,6 +1,6 @@
 title: Toilet Reviews
 description: A blog for reviewing toilets and displaying them on a map.
-baseurl: "/BogStandard"  # Adjust if your site is in a subdirectory
+baseurl: ""  # Adjust if your site is in a subdirectory
 url: "theBogStandard.org"  # Replace with your GitHub Pages URL
 markdown: kramdown
 plugins:
