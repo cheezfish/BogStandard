@@ -1,0 +1,10 @@
+title: Toilet Reviews
+description: A blog for reviewing toilets and displaying them on a map.
+baseurl: "/BogStandard"  # Adjust if your site is in a subdirectory
+url: "https://cheezfish.github.io/BogStandard"  # Replace with your GitHub Pages URL
+markdown: kramdown
+plugins:
+  - jekyll-feed
+collections:
+  notes:
+    output: true
