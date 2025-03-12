@@ -34,9 +34,9 @@ layout: default
                 data-date="{{ note.date }}">
                 <h2>{{ note.title }}</h2>
                 <p><strong>Location:</strong> {{ note.location | join: ', ' }}</p>
-                <p><strong>Rating:</strong> <span class="rating-emojis">{{ note.rating }}</span></p>
+                <p><strong>Shits given:</strong> <span class="rating-emojis" data-rating="{{ note.rating }}"></span></p>
                 <p><strong>Features:</strong> {{ note.features | join: ', ' }}</p>
-                <p><strong>Date:</strong> {{ note.date }}</p>
+                <p><strong>Date:</strong> {{ note.date | date: "%d-%m-%Y" }}</p>
                 <div class="content">
                     {{ note.content | markdownify }}
                 </div>

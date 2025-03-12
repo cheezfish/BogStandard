@@ -11,16 +11,40 @@ document.addEventListener('DOMContentLoaded', function() {
     setupSorting();
     setupEnhancedSearch();
     setupRadiusFilter();
+    updateRatingsToEmojis();
+    customizePopups();
 });
 
 // Initialize the map
 function initMap() {
     console.log("Initializing map...");
-    map = L.map('map').setView(defaultLocation, 13); // Default to London
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
+    
+    // Create map with minimal controls
+    map = L.map('map', {
+        zoomControl: false,  // Remove the default zoom controls
+        attributionControl: false  // Remove the attribution text
+    }).setView(defaultLocation, 13);
+    
+    // Add minimal zoom controls
+    L.control.zoom({
+        position: 'topright'
     }).addTo(map);
+    
+    // Add minimal attribution
+    L.control.attribution({
+        position: 'bottomright',
+        prefix: ''
+    }).addTo(map);
+
+    // Add a minimal style tile layer (CartoDB Positron)
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '© OpenStreetMap contributors, © CARTO'
+    }).addTo(map);
+
+    // Style the map container
+    const mapElement = document.getElementById('map');
+    mapElement.style.borderRadius = '8px';
+    mapElement.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)';
 
     // Set up locate button
     setupLocateButton();
@@ -49,11 +73,18 @@ function setupLocateButton() {
                         userLocation = [position.coords.latitude, position.coords.longitude];
                         map.setView(userLocation, 15);
 
-                        // Add or update user marker
+                        // Add or update user marker with RED color
                         if (window.userMarker) {
                             window.userMarker.setLatLng(userLocation);
                         } else {
-                            window.userMarker = L.marker(userLocation).addTo(map)
+                            window.userMarker = L.circleMarker(userLocation, {
+                                radius: 8,
+                                fillColor: "#e74c3c", // RED for my location
+                                color: "#fff",
+                                weight: 1,
+                                opacity: 1,
+                                fillOpacity: 0.8
+                            }).addTo(map)
                                 .bindPopup("Your location");
                         }
                         window.userMarker.openPopup();
@@ -87,7 +118,7 @@ function setupLocateButton() {
     }
 }
 
-// Add markers for all toilets
+// Add markers for all toilets with BROWN styling
 function addMarkers() {
     console.log("Adding markers...");
     const cards = document.querySelectorAll('.card');
@@ -103,7 +134,15 @@ function addMarkers() {
         const location = locationStr.split(',').map(Number);
         const title = card.getAttribute('data-title') || 'Unnamed Location';
 
-        const marker = L.marker(location).addTo(map)
+        // Use circleMarker with BROWN color for toilet reviews
+        const marker = L.circleMarker(location, {
+            radius: 8,
+            fillColor: "#8B4513", // BROWN for toilet reviews
+            color: "#fff",
+            weight: 1,
+            opacity: 1,
+            fillOpacity: 0.8
+        }).addTo(map)
             .bindPopup(title)
             .on('click', () => {
                 card.scrollIntoView({ behavior: 'smooth' });
@@ -206,7 +245,15 @@ function setupEnhancedSearch() {
                         if (window.searchMarker) {
                             map.removeLayer(window.searchMarker);
                         }
-                        window.searchMarker = L.marker(center).addTo(map)
+                        // Use circle marker with BLUE color for search results
+                        window.searchMarker = L.circleMarker(center, {
+                            radius: 8,
+                            fillColor: "#3388ff", // BLUE for search locations
+                            color: "#fff",
+                            weight: 1,
+                            opacity: 1,
+                            fillOpacity: 0.8
+                        }).addTo(map)
                             .bindPopup(`Search: ${result.display_name}`)
                             .openPopup();
 
@@ -397,12 +444,53 @@ function sortCards(sortBy) {
     });
 }
 
+// Function to convert rating number to poop emojis
 function getRatingEmojis(rating) {
     const poopEmoji = '💩';
     return poopEmoji.repeat(rating);
 }
 
-// Update the card rendering in addMarkers
-const rating = card.getAttribute('data-rating');
-const ratingEmojis = getRatingEmojis(rating);
-card.querySelector('.rating-emojis').textContent = ratingEmojis;
+// Apply poop emojis to all cards
+function updateRatingsToEmojis() {
+    const ratingElements = document.querySelectorAll('.rating-emojis');
+    ratingElements.forEach(element => {
+        const rating = parseInt(element.getAttribute('data-rating'), 10);
+        if (!isNaN(rating) && rating >= 0) {
+            element.textContent = getRatingEmojis(rating);
+        }
+    });
+}
+
+// Make popups more minimal
+function customizePopups() {
+    const style = document.createElement('style');
+    style.textContent = `
+        .leaflet-popup-content-wrapper {
+            border-radius: 4px;
+            padding: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            font-size: 14px;
+        }
+        .leaflet-popup-tip {
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .leaflet-popup-content {
+            margin: 6px 8px;
+            line-height: 1.3;
+        }
+        .leaflet-container {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        .leaflet-control-zoom a {
+            border-radius: 4px;
+            border: none;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.15);
+        }
+        .leaflet-control-attribution {
+            font-size: 9px;
+            background: rgba(255,255,255,0.7);
+            padding: 3px 5px;
+        }
+    `;
+    document.head.appendChild(style);
+}
