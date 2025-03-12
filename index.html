@@ -22,6 +22,7 @@ layout: default
                 <p><strong>Location:</strong> {{ note.location | join: ', ' }}</p>
                 <p><strong>Rating:</strong> {{ note.rating }}/5</p>
                 <p><strong>Features:</strong> {{ note.features | join: ', ' }}</p>
+                <p><strong>Date:</strong> {{ note.date }}</p>
                 <div class="content">
                     {{ note.content | markdownify }}
                 </div>
