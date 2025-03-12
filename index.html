@@ -38,7 +38,14 @@ layout: default
                 <h2>{{ note.title }}</h2>
                 <p><a href="{{ map_url }}" target="_blank">Go there</a></p>
                 <p><strong>Shits given:</strong> <span class="rating-emojis" data-rating="{{ note.rating }}"></span></p>
-                <p><strong>Features:</strong> {{ note.features | join: ', ' }}</p>
+    
+                <p>
+                    {% if note.accessible %} ♿ {% endif %}
+                    {% if note.baby_changing %} 👶 {% endif %}
+                    {% if note.bidet %} 🪠 {% endif %}
+                    {% if note.free %} 🆓 {% elsif note.paid %} 💰 {% endif %}
+                </p>
+    
                 <p><strong>Date:</strong> {{ note.date | date: "%d-%m-%Y" }}</p>
                 <div class="content">
                     {{ note.content | markdownify }}

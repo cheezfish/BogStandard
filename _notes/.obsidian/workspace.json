@@ -41,12 +41,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "toilet8.md",
+                "file": "toilet0.md",
                 "mode": "source",
                 "source": true
               },
               "icon": "lucide-file",
-              "title": "toilet8"
+              "title": "toilet0"
             }
           }
         ],
@@ -194,19 +194,22 @@
       "canvas:Create new canvas": false,
       "daily-notes:Open today's daily note": false,
       "templates:Insert template": false,
-      "command-palette:Open command palette": false
+      "command-palette:Open command palette": false,
+      "templater-obsidian:Templater": false
     }
   },
   "active": "dffd23f235f625f7",
   "lastOpenFiles": [
+    "Untitled.md",
+    "toilet0.md",
+    "toilet1.md",
+    "toilet2.md",
+    "toilet3.md",
+    "toilet4.md",
+    "toilet5.md",
+    "toilet6.md",
     "toilet7.md",
     "toilet8.md",
-    "toilet6.md",
-    "toilet5.md",
-    "toilet4.md",
-    "toilet3.md",
-    "toilet2.md",
-    "toilet1.md",
     "_templates/Template.md",
     "_templates"
   ]

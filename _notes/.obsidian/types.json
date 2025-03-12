@@ -1,0 +1,12 @@
+{
+  "types": {
+    "aliases": "aliases",
+    "cssclasses": "multitext",
+    "tags": "tags",
+    "accessible": "checkbox",
+    "baby changing": "checkbox",
+    "bidet": "checkbox",
+    "free": "checkbox",
+    "paid": "checkbox"
+  }
+}
