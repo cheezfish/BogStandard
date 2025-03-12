@@ -340,16 +340,3 @@ function sortCards(sortBy) {
         case 'date':
             cards.sort((a, b) => {
                 const dateA = new Date(a.getAttribute('data-date'));
-                const dateB = new Date(b.getAttribute('data-date'));
-                return dateB - dateA;
-            });
-            break;
-        default:
-            console.log("No sort selected, or unknown sort");
-    }
-
-    cardsContainer.innerHTML = '';
-    cards.forEach(card => {
-        cardsContainer.appendChild(card);
-    });
-}
