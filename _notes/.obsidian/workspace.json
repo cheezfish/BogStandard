@@ -41,12 +41,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "toilet4.md",
+                "file": "toilet3.md",
                 "mode": "source",
-                "source": true
+                "source": false
               },
               "icon": "lucide-file",
-              "title": "toilet4"
+              "title": "toilet3"
             }
           }
         ],
@@ -199,10 +199,10 @@
   },
   "active": "dffd23f235f625f7",
   "lastOpenFiles": [
-    "toilet1.md",
     "toilet4.md",
-    "toilet2.md",
     "toilet3.md",
+    "toilet2.md",
+    "toilet1.md",
     "_templates/Template.md",
     "_templates"
   ]
