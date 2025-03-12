@@ -8,3 +8,9 @@ plugins:
 collections:
   notes:
     output: true
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - toilet0.md
