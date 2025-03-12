@@ -15,77 +15,15 @@ h1 {
 
 /* Search Bar */
 .search-bar {
-    display: flex;
-    flex-wrap: nowrap; /* Prevent wrapping */
-    align-items: center; /* Align items vertically */
-    gap: 0.5rem; /* Space between items */
+    text-align: center;
     margin: 1rem 0;
-    padding: 0.5rem;
-    overflow-x: auto; /* Allow horizontal scrolling on small screens */
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .search-bar input, .search-bar button {
     padding: 0.5rem;
+    margin: 0.5rem;
     border: 1px solid #ccc;
     border-radius: 4px;
-    margin: 0; /* Remove margin to rely on gap for spacing */
-    font-size: 1rem;
-}
-
-.search-bar input {
-    flex: 1; /* Allow inputs to grow */
-    min-width: 120px; /* Minimum width for inputs */
-}
-
-.search-bar button {
-    background-color: #007BFF;
-    color: #fff;
-    cursor: pointer;
-    border: none;
-    transition: background-color 0.2s;
-}
-
-.search-bar button:hover {
-    background-color: #0056b3;
-}
-
-/* Sort Options */
-.search-bar .sort-options {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.search-bar .sort-options label {
-    white-space: nowrap; /* Prevent label from wrapping */
-}
-
-.search-bar .sort-options select {
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 1rem;
-}
-
-/* Locate Button */
-#locate-button {
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: #fff;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.2s;
-}
-
-#locate-button:hover {
-    background-color: #f0f0f0;
 }
 
 /* Container for Map and Cards */
