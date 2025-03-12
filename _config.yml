@@ -8,3 +8,6 @@ plugins:
 collections:
   notes:
     output: true
+
+exclude:
+  - _notes/toilettemplate.md
