@@ -2,11 +2,20 @@
 layout: default
 ---
 
-<!-- Search Bar -->
+<!-- Search and Sort Bar -->
 <div class="search-bar">
     <input type="text" id="search-input" placeholder="Search location...">
     <input type="number" id="radius-input" placeholder="Radius (km)" min="1">
     <button id="search-button">Search</button>
+    
+    <div class="sort-options">
+        <label for="sort-select">Sort by:</label>
+        <select id="sort-select">
+            <option value="distance" selected>Distance</option>
+            <option value="rating">Rating</option>
+            <option value="date">Most Recent</option>
+        </select>
+    </div>
 </div>
 
 <!-- Map and Cards Container -->
@@ -15,9 +24,13 @@ layout: default
     <div id="map"></div>
 
     <!-- Cards Section -->
-    <div class="cards">
+    <div class="cards" id="cards-container">
         {% for note in site.notes %}
-            <div class="card" data-location="{{ note.location | join: ',' }}" data-title="{{ note.title }}">
+            <div class="card" 
+                data-location="{{ note.location | join: ',' }}" 
+                data-title="{{ note.title }}"
+                data-rating="{{ note.rating }}"
+                data-date="{{ note.date }}">
                 <h2>{{ note.title }}</h2>
                 <p><strong>Location:</strong> {{ note.location | join: ', ' }}</p>
                 <p><strong>Rating:</strong> {{ note.rating }}/5</p>
