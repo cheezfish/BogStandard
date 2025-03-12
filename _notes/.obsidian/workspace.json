@@ -41,12 +41,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "toilet0.md",
+                "file": "toilet7.md",
                 "mode": "source",
                 "source": true
               },
               "icon": "lucide-file",
-              "title": "toilet0"
+              "title": "toilet7"
             }
           }
         ],
@@ -200,16 +200,16 @@
   },
   "active": "dffd23f235f625f7",
   "lastOpenFiles": [
-    "Untitled.md",
     "toilet0.md",
-    "toilet1.md",
+    "toilet7.md",
+    "toilet8.md",
     "toilet2.md",
+    "toilet1.md",
+    "Untitled.md",
     "toilet3.md",
     "toilet4.md",
     "toilet5.md",
     "toilet6.md",
-    "toilet7.md",
-    "toilet8.md",
     "_templates/Template.md",
     "_templates"
   ]
