@@ -122,3 +122,22 @@ h1 {
         overflow-y: auto;
     }
 }
+
+#locate-button {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: background-color 0.3s;
+}
+
+#locate-button:hover {
+    background-color: #f4f4f4;
+}
+
+#locate-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}

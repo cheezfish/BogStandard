@@ -18,26 +18,62 @@ function initMap() {
         attribution: '© OpenStreetMap contributors'
     }).addTo(map);
 
-    // Try to get user's location
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            // Success callback
-            (position) => {
-                userLocation = [position.coords.latitude, position.coords.longitude];
-                map.setView(userLocation, 13);
-
-                // User marker
-                L.marker(userLocation).addTo(map)
-                    .bindPopup("Your location")
-                    .openPopup();
-            },
-            // Error callback - silently continue with default location
-            () => {}
-        );
-    }
+    // Set up locate button
+    setupLocateButton();
 
     // Add markers for each toilet
     addMarkers();
+}
+
+// Set up locate button functionality
+function setupLocateButton() {
+    const locateButton = document.getElementById('locate-button');
+    if (locateButton) {
+        locateButton.addEventListener('click', function() {
+            if (navigator.geolocation) {
+                // Show loading state
+                locateButton.disabled = true;
+                locateButton.textContent = 'Locating...';
+                
+                navigator.geolocation.getCurrentPosition(
+                    // Success callback
+                    (position) => {
+                        userLocation = [position.coords.latitude, position.coords.longitude];
+                        map.setView(userLocation, 15);
+
+                        // Add or update user marker
+                        if (window.userMarker) {
+                            window.userMarker.setLatLng(userLocation);
+                        } else {
+                            window.userMarker = L.marker(userLocation).addTo(map)
+                                .bindPopup("Your location");
+                        }
+                        window.userMarker.openPopup();
+                        
+                        // Re-sort by distance if that's the current sort
+                        if (document.getElementById('sort-select').value === 'distance') {
+                            sortCards('distance');
+                        }
+                        
+                        // Reset button
+                        locateButton.disabled = false;
+                        locateButton.innerHTML = '<i class="fa fa-location-arrow"></i> My Location';
+                    },
+                    // Error callback
+                    (error) => {
+                        console.error("Error getting location:", error);
+                        alert("Could not get your location. Please check your browser permissions.");
+                        
+                        // Reset button
+                        locateButton.disabled = false;
+                        locateButton.innerHTML = '<i class="fa fa-location-arrow"></i> My Location';
+                    }
+                );
+            } else {
+                alert("Geolocation is not supported by your browser.");
+            }
+        });
+    }
 }
 
 // Add markers for all toilets

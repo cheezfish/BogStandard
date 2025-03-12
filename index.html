@@ -16,6 +16,10 @@ layout: default
             <option value="date">Most Recent</option>
         </select>
     </div>
+    <!-- Add this inside the search-bar div in index.html -->
+    <button id="locate-button" title="Find my location">
+        <i class="fa fa-location-arrow"></i> My Location
+    </button>
 </div>
 
 <!-- Map and Cards Container -->
@@ -45,6 +49,7 @@ layout: default
 </div>
 
 <!-- Leaflet.js and Custom Script -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="{{ '../assets/js/map.js' | relative_url }}"></script>
