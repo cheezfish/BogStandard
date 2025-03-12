@@ -8,6 +8,7 @@ const defaultLocation = [51.5074, -0.1278]; // London
 document.addEventListener('DOMContentLoaded', function() {
     initMap();
     setupSorting();
+    setupEnhancedSearch();
 });
 
 // Initialize the map
@@ -106,6 +107,124 @@ function addMarkers() {
             map.setView(location, 15);
             marker.openPopup();
         });
+    });
+}
+
+// Debounce function to limit API calls while typing
+function debounce(func, wait) {
+    let timeout;
+    return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+    };
+}
+
+// Set up enhanced search functionality
+function setupEnhancedSearch() {
+    const searchInput = document.getElementById('search-input');
+    const searchResults = document.createElement('div');
+    searchResults.className = 'search-results';
+    searchResults.style.display = 'none';
+    
+    // Insert search results container after search input
+    searchInput.parentNode.insertBefore(searchResults, searchInput.nextSibling);
+    
+    // Function to perform search
+    const performSearch = debounce(function(query) {
+        if (query.length < 3) {
+            searchResults.style.display = 'none';
+            return;
+        }
+        
+        // Show loading indicator
+        searchResults.innerHTML = '<div class="search-loading">Searching...</div>';
+        searchResults.style.display = 'block';
+        
+        // Call Nominatim API
+        fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(data => {
+                searchResults.innerHTML = '';
+                
+                if (data.length === 0) {
+                    searchResults.innerHTML = '<div class="search-no-results">No results found</div>';
+                    return;
+                }
+                
+                // Display results (limit to 5)
+                data.slice(0, 5).forEach(result => {
+                    const resultItem = document.createElement('div');
+                    resultItem.className = 'search-result-item';
+                    resultItem.textContent = result.display_name;
+                    
+                    resultItem.addEventListener('click', function() {
+                        // Set input value
+                        searchInput.value = result.display_name;
+                        
+                        // Hide results
+                        searchResults.style.display = 'none';
+                        
+                        // Set map view
+                        const center = [parseFloat(result.lat), parseFloat(result.lon)];
+                        map.setView(center, 13);
+                        
+                        // Add marker
+                        if (window.searchMarker) {
+                            map.removeLayer(window.searchMarker);
+                        }
+                        window.searchMarker = L.marker(center).addTo(map)
+                            .bindPopup(`Search: ${result.display_name}`)
+                            .openPopup();
+                        
+                        // Trigger distance sorting
+                        sortCards('distance');
+                    });
+                    
+                    searchResults.appendChild(resultItem);
+                });
+                
+                searchResults.style.display = 'block';
+            })
+            .catch(error => {
+                console.error("Error in geocoding request:", error);
+                searchResults.innerHTML = '<div class="search-error">Error searching. Please try again.</div>';
+            });
+    }, 300); // 300ms debounce
+    
+    // Listen for input changes
+    searchInput.addEventListener('input', function() {
+        const query = this.value.trim();
+        performSearch(query);
+    });
+    
+    // Hide results when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+            searchResults.style.display = 'none';
+        }
+    });
+    
+    // Handle search button click
+    const searchButton = document.getElementById('search-button');
+    if (searchButton) {
+        searchButton.addEventListener('click', function() {
+            const query = searchInput.value.trim();
+            if (query) {
+                performSearch(query);
+            }
+        });
+    }
+    
+    // Handle form submission (e.g., when user presses Enter)
+    searchInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const query = this.value.trim();
+            if (query) {
+                performSearch(query);
+                searchResults.style.display = 'none';
+            }
+        }
     });
 }
 
@@ -208,35 +327,4 @@ function sortCards(sortBy) {
     });
 
     console.log("Sorting complete");
-}
-
-// Search implementation
-const searchButton = document.getElementById('search-button');
-if (searchButton) {
-    searchButton.addEventListener('click', function() {
-        const query = document.getElementById('search-input').value;
-
-        if (!query) return;
-
-        // Use Nominatim for geocoding
-        fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.length > 0) {
-                    const center = [parseFloat(data[0].lat), parseFloat(data[0].lon)];
-                    map.setView(center, 13);
-
-                    // Optional: Add a marker at the search location
-                    L.marker(center).addTo(map)
-                        .bindPopup(`Search: ${query}`)
-                        .openPopup();
-
-                    // Trigger distance sorting after search
-                    sortCards('distance');
-                }
-            })
-            .catch(error => {
-                console.error("Error in geocoding request:", error);
-            });
-    });
 }
