@@ -29,6 +29,10 @@
             <option value="date">Most Recent</option>
         </select>
     </div>
+
+    <button id="add-toilet-button" title="Add a new toilet">
+        <i class="fa fa-plus"></i> Add Toilet
+    </button>
 </div>
 
 <div class="container">
@@ -92,32 +96,6 @@
             
     
             <div class="card" 
-                data-location="Lat to 6 digits,Lon to 6 digits" 
-                data-title="Title of Toilet"
-                data-rating="5.0"
-                data-date="2025-03-07 00:00:00 +0000">
-                <h2>Title of Toilet</h2>
-                <p><a href="https://www.google.com/maps?q=Lat to 6 digits,Lon to 6 digits" target="_blank">Go there</a></p>
-                <p><strong>Shits given:</strong> <span class="rating-emojis" data-rating="5.0"></span></p>
-    
-                <p>
-                     ♿ 
-                     👶 
-                     🪠 
-                     🆓 
-                </p>
-    
-                <p><strong>Date:</strong> 07-03-2025</p>
-                <div class="content">
-                    <p>Well-kept and convenient for shoppers, but you’ll need to pay 50p.</p>
-
-                </div>
-            </div>
-        
-            
-            
-    
-            <div class="card" 
                 data-location="51.531637,-0.124493" 
                 data-title="King’s Cross Station Toilet"
                 data-rating="3.8"
@@ -136,6 +114,32 @@
                 <p><strong>Date:</strong> 08-03-2025</p>
                 <div class="content">
                     <p>A 30p charge applies, but it’s kept reasonably clean given the traffic.</p>
+
+                </div>
+            </div>
+        
+            
+            
+    
+            <div class="card" 
+                data-location="Lat to 6 digits,Lon to 6 digits" 
+                data-title="Title of Toilet"
+                data-rating="5"
+                data-date="2025-03-08 00:00:00 +0000">
+                <h2>Title of Toilet</h2>
+                <p><a href="https://www.google.com/maps?q=Lat to 6 digits,Lon to 6 digits" target="_blank">Go there</a></p>
+                <p><strong>Shits given:</strong> <span class="rating-emojis" data-rating="5"></span></p>
+    
+                <p>
+                     ♿ 
+                     👶 
+                     🪠 
+                     🆓 
+                </p>
+    
+                <p><strong>Date:</strong> 08-03-2025</p>
+                <div class="content">
+                    <p>Replace with Notes</p>
 
                 </div>
             </div>
@@ -270,6 +274,46 @@
                 </div>
             </div>
         
+    </div>
+</div>
+
+<div id="toilet-form-modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Add New Toilet</h2>
+        <form id="toilet-form">
+            <label for="title">Title:</label>
+            <input type="text" id="title" name="title" required>
+            
+            <label for="location">Location:</label>
+            <input type="text" id="location" name="location" readonly>
+            
+            <label for="rating">Rating (1-5):</label>
+            <input type="number" id="rating" name="rating" min="1" max="5" required>
+            
+            <label for="date">Date:</label>
+            <input type="date" id="date" name="date" required>
+            
+            <label for="accessible">Accessible:</label>
+            <input type="checkbox" id="accessible" name="accessible">
+            
+            <label for="baby_changing">Baby Changing:</label>
+            <input type="checkbox" id="baby_changing" name="baby_changing">
+            
+            <label for="bidet">Bidet:</label>
+            <input type="checkbox" id="bidet" name="bidet">
+            
+            <label for="free">Free:</label>
+            <input type="checkbox" id="free" name="free">
+            
+            <label for="paid">Paid:</label>
+            <input type="checkbox" id="paid" name="paid">
+            
+            <label for="notes">Notes:</label>
+            <textarea id="notes" name="notes"></textarea>
+            
+            <button type="submit">Submit</button>
+        </form>
     </div>
 </div>
 

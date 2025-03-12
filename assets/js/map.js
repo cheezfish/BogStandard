@@ -494,3 +494,66 @@ function customizePopups() {
     `;
     document.head.appendChild(style);
 }
+
+// Add this to the DOMContentLoaded event listener
+document.getElementById('add-toilet-button').addEventListener('click', function() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            const lat = position.coords.latitude.toFixed(6);
+            const lon = position.coords.longitude.toFixed(6);
+            document.getElementById('location').value = `${lat},${lon}`;
+            document.getElementById('toilet-form-modal').style.display = 'block';
+        }, function(error) {
+            alert("Could not get your location. Please check your browser permissions.");
+        });
+    } else {
+        alert("Geolocation is not supported by your browser.");
+    }
+});
+
+// Close the modal when the close button is clicked
+document.querySelector('.close').addEventListener('click', function() {
+    document.getElementById('toilet-form-modal').style.display = 'none';
+});
+
+// Close the modal when clicking outside of it
+window.addEventListener('click', function(event) {
+    if (event.target === document.getElementById('toilet-form-modal')) {
+        document.getElementById('toilet-form-modal').style.display = 'none';
+    }
+});
+
+// Handle form submission
+document.getElementById('toilet-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const formData = new FormData(this);
+    const data = {};
+    formData.forEach((value, key) => {
+        data[key] = value;
+    });
+
+    // Add the current date if not provided
+    if (!data.date) {
+        data.date = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
+    }
+
+    // Send data to Make.com webhook
+    fetch('https://hook.eu2.make.com/cqwjb5cenvjpqcymbyx895iv7snr5glf', {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then(response => {
+        if (response.ok) {
+            alert('Toilet added successfully!');
+            document.getElementById('toilet-form-modal').style.display = 'none';
+            document.getElementById('toilet-form').reset();
+        } else {
+            alert('Error submitting form. Please try again.');
+        }
+    }).catch(error => {
+        console.error('Error:', error);
+        alert('Error submitting form. Please try again.');
+    });
+});
