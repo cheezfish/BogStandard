@@ -7,23 +7,10 @@ const defaultLocation = [51.5074, -0.1278]; // London
 // Initialize the map when the DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     console.log("DOM Content Loaded, initializing map...");
-    
-    // Test API call to check if Nominatim works
-    fetch('https://nominatim.openstreetmap.org/search?format=json&q=london')
-        .then(response => {
-            console.log("API test status:", response.status);
-            return response.json();
-        })
-        .then(data => {
-            console.log("API test data received:", data.length > 0);
-        })
-        .catch(error => {
-            console.error("API test error:", error);
-        });
-    
     initMap();
     setupSorting();
     setupEnhancedSearch();
+    setupRadiusFilter();
 });
 
 // Initialize the map
@@ -139,32 +126,11 @@ function addMarkers() {
     console.log(`Added ${markers.length} markers`);
 }
 
-// Alternative enhanced search implementation with debugging
+// Enhanced search with autocomplete and suggestions
 function setupEnhancedSearch() {
     console.log("Setting up enhanced search...");
     const searchInput = document.getElementById('search-input');
     const searchButton = document.getElementById('search-button');
-    
-    if (!searchInput) {
-        console.error("Search input element not found!");
-        return;
-    }
-    if (!searchButton) {
-        console.error("Search button element not found!");
-    }
-    
-    console.log("Search elements found");
-    
-    // Create and append results container
-    const searchContainer = searchInput.parentElement;
-    if (!searchContainer) {
-        console.error("Could not find parent container for search input");
-        return;
-    }
-    
-    searchContainer.style.position = 'relative';
-    
-    // Create results container
     const searchResults = document.createElement('div');
     searchResults.id = 'search-results';
     searchResults.style.display = 'none';
@@ -179,10 +145,8 @@ function setupEnhancedSearch() {
     searchResults.style.borderRadius = '0 0 4px 4px';
     searchResults.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
     searchResults.style.zIndex = '1000';
-    
-    searchContainer.appendChild(searchResults);
-    console.log("Search results container added to DOM");
-    
+    searchInput.parentElement.appendChild(searchResults);
+
     // Debounce function to limit API calls
     function debounce(func, wait) {
         let timeout;
@@ -191,139 +155,121 @@ function setupEnhancedSearch() {
             timeout = setTimeout(() => func.apply(this, args), wait);
         };
     }
-    
+
     // Perform search with debounce
     const performSearch = debounce(function(query) {
-        console.log("Performing search for:", query);
-        
         if (query.length < 3) {
             searchResults.style.display = 'none';
             return;
         }
-        
-        // Show loading
+
         searchResults.innerHTML = '<div style="padding:10px;color:#666;font-style:italic;">Searching...</div>';
         searchResults.style.display = 'block';
-        
-        console.log("Fetching from Nominatim:", query);
-        // API call
+
         fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`)
-            .then(response => {
-                console.log("API response status:", response.status);
-                return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
-                console.log("Search results:", data.length, "items");
                 searchResults.innerHTML = '';
-                
                 if (data.length === 0) {
                     searchResults.innerHTML = '<div style="padding:10px;color:#666;font-style:italic;">No results found</div>';
                     return;
                 }
-                
-                // Create results
+
                 data.slice(0, 5).forEach(result => {
                     const item = document.createElement('div');
                     item.style.padding = '10px';
                     item.style.borderBottom = '1px solid #eee';
                     item.style.cursor = 'pointer';
                     item.textContent = result.display_name;
-                    
-                    item.addEventListener('mouseover', function() {
-                        this.style.backgroundColor = '#f5f5f5';
-                    });
-                    
-                    item.addEventListener('mouseout', function() {
-                        this.style.backgroundColor = '';
-                    });
-                    
+
                     item.addEventListener('click', function() {
-                        console.log("Search result clicked:", result.display_name);
                         searchInput.value = result.display_name;
                         searchResults.style.display = 'none';
-                        
+
                         const center = [parseFloat(result.lat), parseFloat(result.lon)];
-                        console.log("Setting map view to:", center);
                         map.setView(center, 13);
-                        
+
                         if (window.searchMarker) {
                             map.removeLayer(window.searchMarker);
                         }
                         window.searchMarker = L.marker(center).addTo(map)
                             .bindPopup(`Search: ${result.display_name}`)
                             .openPopup();
-                        
+
                         sortCards('distance');
+                        filterByRadius(center);
                     });
-                    
+
                     searchResults.appendChild(item);
                 });
-                
-                console.log("Results displayed");
             })
             .catch(error => {
                 console.error("Search error:", error);
                 searchResults.innerHTML = '<div style="padding:10px;color:#e74c3c;">Error searching. Try again.</div>';
             });
     }, 300);
-    
-    // Input handler
+
     searchInput.addEventListener('input', function() {
         const query = this.value.trim();
-        console.log("Search input changed:", query);
         performSearch(query);
     });
-    
-    // Close results when clicking elsewhere
+
     document.addEventListener('click', function(e) {
         if (e.target !== searchInput && !searchResults.contains(e.target)) {
             searchResults.style.display = 'none';
         }
     });
-    
-    // Handle search button click
-    if (searchButton) {
-        searchButton.addEventListener('click', function() {
-            const query = searchInput.value.trim();
-            console.log("Search button clicked with query:", query);
-            if (query) {
-                performSearch(query);
-            }
-        });
-    }
-    
-    // Handle Enter key
+
+    searchButton.addEventListener('click', function() {
+        const query = searchInput.value.trim();
+        if (query) {
+            performSearch(query);
+        }
+    });
+
     searchInput.addEventListener('keydown', function(e) {
         if (e.key === 'Enter') {
             e.preventDefault();
             const query = this.value.trim();
-            console.log("Enter key pressed with query:", query);
             if (query) {
                 performSearch(query);
             }
         }
     });
-    
-    console.log("Enhanced search setup complete");
 }
 
-// Set up sorting functionality
-function setupSorting() {
-    console.log("Setting up sorting...");
-    const sortSelect = document.getElementById('sort-select');
-    if (sortSelect) {
-        // Set initial sort
-        sortCards('distance');
-
-        // Add change event listener
-        sortSelect.addEventListener('change', function() {
-            console.log("Sort changed to:", this.value);
-            sortCards(this.value);
+// Set up radius filtering
+function setupRadiusFilter() {
+    const radiusInput = document.getElementById('radius-input');
+    if (radiusInput) {
+        radiusInput.addEventListener('input', function() {
+            const radius = parseFloat(this.value);
+            if (!isNaN(radius) && radius > 0) {
+                const center = map.getCenter();
+                filterByRadius([center.lat, center.lng], radius);
+            }
         });
-        console.log("Sorting setup complete");
-    } else {
-        console.warn("Sort select element not found");
     }
+}
+
+// Filter markers by radius
+function filterByRadius(center, radius) {
+    const radiusInput = document.getElementById('radius-input');
+    if (!radiusInput) return;
+
+    radius = radius || parseFloat(radiusInput.value);
+    if (isNaN(radius) || radius <= 0) return;
+
+    markers.forEach(markerData => {
+        const distance = calculateDistance(center[0], center[1], markerData.location[0], markerData.location[1]);
+        if (distance <= radius * 1000) {
+            markerData.marker.addTo(map);
+            markerData.card.style.display = 'block';
+        } else {
+            markerData.marker.remove();
+            markerData.card.style.display = 'none';
+        }
+    });
 }
 
 // Function to calculate distance (Haversine formula)
@@ -342,23 +288,24 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
     return R * c;
 }
 
+// Set up sorting functionality
+function setupSorting() {
+    const sortSelect = document.getElementById('sort-select');
+    if (sortSelect) {
+        sortCards('distance');
+        sortSelect.addEventListener('change', function() {
+            sortCards(this.value);
+        });
+    }
+}
+
 // Sort cards function
 function sortCards(sortBy) {
-    console.log("Sorting by:", sortBy);
-
     const cardsContainer = document.getElementById('cards-container');
-    if (!cardsContainer) {
-        console.error("Cards container not found");
-        return;
-    }
+    if (!cardsContainer) return;
 
     const cards = Array.from(cardsContainer.querySelectorAll('.card'));
-    if (cards.length === 0) {
-        console.warn("No cards found to sort");
-        return;
-    }
-
-    console.log(`Found ${cards.length} cards to sort`);
+    if (cards.length === 0) return;
 
     switch (sortBy) {
         case 'distance':
@@ -370,7 +317,6 @@ function sortCards(sortBy) {
             }
 
             if (!referenceLocation) {
-                console.warn("User location or search location not available. Using default.");
                 referenceLocation = defaultLocation;
             }
 
@@ -388,27 +334,22 @@ function sortCards(sortBy) {
             cards.sort((a, b) => {
                 const ratingA = parseFloat(a.getAttribute('data-rating'));
                 const ratingB = parseFloat(b.getAttribute('data-rating'));
-                return ratingB - ratingA; // Descending order (highest rating first)
+                return ratingB - ratingA;
             });
             break;
         case 'date':
             cards.sort((a, b) => {
                 const dateA = new Date(a.getAttribute('data-date'));
                 const dateB = new Date(b.getAttribute('data-date'));
-                return dateB - dateA; // Descending order (most recent first)
+                return dateB - dateA;
             });
             break;
         default:
             console.log("No sort selected, or unknown sort");
     }
 
-    // Clear the container first
     cardsContainer.innerHTML = '';
-
-    // Then append all cards in the new order
     cards.forEach(card => {
         cardsContainer.appendChild(card);
     });
-
-    console.log("Sorting complete");
 }
