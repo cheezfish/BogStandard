@@ -2,9 +2,13 @@
 layout: default
 ---
 
-<!-- Search and Sort Bar -->
 <div class="search-bar">
+    <button id="locate-button" title="Find my location">
+        <i class="fa fa-location-arrow"></i>
+    </button>
     <input type="text" id="search-input" placeholder="Search location...">
+    <div class="search-suggestions">
+        <ul></ul> </div>
     <input type="number" id="radius-input" placeholder="Radius (km)" min="1">
     <button id="search-button">Search</button>
     
@@ -16,18 +20,11 @@ layout: default
             <option value="date">Most Recent</option>
         </select>
     </div>
-    <!-- Add this inside the search-bar div in index.html -->
-    <button id="locate-button" title="Find my location">
-        <i class="fa fa-location-arrow"></i>
-    </button>
 </div>
 
-<!-- Map and Cards Container -->
 <div class="container">
-    <!-- Map Section -->
     <div id="map"></div>
 
-    <!-- Cards Section -->
     <div class="cards" id="cards-container">
         {% for note in site.notes %}
             <div class="card" 
@@ -48,7 +45,6 @@ layout: default
     </div>
 </div>
 
-<!-- Leaflet.js and Custom Script -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>

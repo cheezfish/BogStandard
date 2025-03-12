@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+    <header>
+        <h1>The Bog Standard</h1>
+    </header>
+    <main>
+        <div class="search-bar">
+    <button id="locate-button" title="Find my location">
+        <i class="fa fa-location-arrow"></i>
+    </button>
+    <input type="text" id="search-input" placeholder="Search location...">
+    <div class="search-suggestions">
+        <ul></ul> </div>
+    <input type="number" id="radius-input" placeholder="Radius (km)" min="1">
+    <button id="search-button">Search</button>
+    
+    <div class="sort-options">
+        <label for="sort-select">Sort by:</label>
+        <select id="sort-select">
+            <option value="distance" selected>Distance</option>
+            <option value="rating">Rating</option>
+            <option value="date">Most Recent</option>
+        </select>
+    </div>
+</div>
+
+<div class="container">
+    <div id="map"></div>
+
+    <div class="cards" id="cards-container">
+        
+            <div class="card" 
+                data-location="51.496424,-0.143921" 
+                data-title="Victoria Station"
+                data-rating="5.0"
+                data-date="2025-01-01 00:00:00 +0000">
+                <h2>Victoria Station</h2>
+                <p><strong>Location:</strong> 51.496424, -0.143921</p>
+                <p><strong>Rating:</strong> 5.0/5</p>
+                <p><strong>Features:</strong> Well Kept, Busy, Paid</p>
+                <p><strong>Date:</strong> 2025-01-01 00:00:00 +0000</p>
+                <div class="content">
+                    <p>This toilet is British af</p>
+
+                </div>
+            </div>
+        
+            <div class="card" 
+                data-location="40.785091,-73.968285" 
+                data-title="Central Park"
+                data-rating="4.5"
+                data-date="2025-03-11 00:00:00 +0000">
+                <h2>Central Park</h2>
+                <p><strong>Location:</strong> 40.785091, -73.968285</p>
+                <p><strong>Rating:</strong> 4.5/5</p>
+                <p><strong>Features:</strong> Clean, Handicap Accessible, Free</p>
+                <p><strong>Date:</strong> 2025-03-11 00:00:00 +0000</p>
+                <div class="content">
+                    <p>This toilet is located near the entrance of Central Park. It’s clean and well-maintained…</p>
+
+                </div>
+            </div>
+        
+            <div class="card" 
+                data-location="40.785091,-75.968285" 
+                data-title="Philly Gas Station"
+                data-rating="0.5"
+                data-date="2025-03-11 00:00:00 +0000">
+                <h2>Philly Gas Station</h2>
+                <p><strong>Location:</strong> 40.785091, -75.968285</p>
+                <p><strong>Rating:</strong> 0.5/5</p>
+                <p><strong>Features:</strong> Bad, Handicap Parking, Paid</p>
+                <p><strong>Date:</strong> 2025-03-11 00:00:00 +0000</p>
+                <div class="content">
+                    <p>This toilet is shit</p>
+
+                </div>
+            </div>
+        
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="/assets/js/map.js"></script>
+    </main>
+</body>
+</html>
