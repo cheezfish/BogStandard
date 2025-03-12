@@ -11,8 +11,14 @@ body {
 h1 {
     font-family: Georgia, 'Times New Roman', Times, serif;
     text-align: center;
-    margin: 2rem 0;
+    margin: 1rem 0;
     color: #ffeb3b;
+}
+
+.subtitle {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    text-align: center;
+    color: #ffffff;
 }
 
 /* Search Bar */
