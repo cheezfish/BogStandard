@@ -6,6 +6,21 @@ const defaultLocation = [51.5074, -0.1278]; // London
 
 // Initialize the map when the DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
+    console.log("DOM Content Loaded, initializing map...");
+    
+    // Test API call to check if Nominatim works
+    fetch('https://nominatim.openstreetmap.org/search?format=json&q=london')
+        .then(response => {
+            console.log("API test status:", response.status);
+            return response.json();
+        })
+        .then(data => {
+            console.log("API test data received:", data.length > 0);
+        })
+        .catch(error => {
+            console.error("API test error:", error);
+        });
+    
     initMap();
     setupSorting();
     setupEnhancedSearch();
@@ -13,6 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Initialize the map
 function initMap() {
+    console.log("Initializing map...");
     map = L.map('map').setView(defaultLocation, 13); // Default to London
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -24,13 +40,16 @@ function initMap() {
 
     // Add markers for each toilet
     addMarkers();
+    console.log("Map initialized");
 }
 
 // Set up locate button functionality
 function setupLocateButton() {
+    console.log("Setting up locate button...");
     const locateButton = document.getElementById('locate-button');
     if (locateButton) {
         locateButton.addEventListener('click', function() {
+            console.log("Locate button clicked");
             if (navigator.geolocation) {
                 // Show loading state
                 locateButton.disabled = true;
@@ -39,6 +58,7 @@ function setupLocateButton() {
                 navigator.geolocation.getCurrentPosition(
                     // Success callback
                     (position) => {
+                        console.log("Got user position:", position.coords.latitude, position.coords.longitude);
                         userLocation = [position.coords.latitude, position.coords.longitude];
                         map.setView(userLocation, 15);
 
@@ -74,16 +94,24 @@ function setupLocateButton() {
                 alert("Geolocation is not supported by your browser.");
             }
         });
+        console.log("Locate button setup complete");
+    } else {
+        console.warn("Locate button not found in DOM");
     }
 }
 
 // Add markers for all toilets
 function addMarkers() {
+    console.log("Adding markers...");
     const cards = document.querySelectorAll('.card');
+    console.log(`Found ${cards.length} cards to add markers for`);
 
     cards.forEach((card) => {
         const locationStr = card.getAttribute('data-location');
-        if (!locationStr) return;
+        if (!locationStr) {
+            console.warn("Card missing data-location attribute:", card);
+            return;
+        }
 
         const location = locationStr.split(',').map(Number);
         const title = card.getAttribute('data-title') || 'Unnamed Location';
@@ -108,67 +136,116 @@ function addMarkers() {
             marker.openPopup();
         });
     });
+    console.log(`Added ${markers.length} markers`);
 }
 
-// Debounce function to limit API calls while typing
-function debounce(func, wait) {
-    let timeout;
-    return function(...args) {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => func.apply(this, args), wait);
-    };
-}
-
-// Set up enhanced search functionality
+// Alternative enhanced search implementation with debugging
 function setupEnhancedSearch() {
+    console.log("Setting up enhanced search...");
     const searchInput = document.getElementById('search-input');
+    const searchButton = document.getElementById('search-button');
+    
+    if (!searchInput) {
+        console.error("Search input element not found!");
+        return;
+    }
+    if (!searchButton) {
+        console.error("Search button element not found!");
+    }
+    
+    console.log("Search elements found");
+    
+    // Create and append results container
+    const searchContainer = searchInput.parentElement;
+    if (!searchContainer) {
+        console.error("Could not find parent container for search input");
+        return;
+    }
+    
+    searchContainer.style.position = 'relative';
+    
+    // Create results container
     const searchResults = document.createElement('div');
-    searchResults.className = 'search-results';
+    searchResults.id = 'search-results';
     searchResults.style.display = 'none';
+    searchResults.style.position = 'absolute';
+    searchResults.style.top = (searchInput.offsetHeight + 5) + 'px';
+    searchResults.style.left = '0';
+    searchResults.style.width = searchInput.offsetWidth + 'px';
+    searchResults.style.maxHeight = '300px';
+    searchResults.style.overflowY = 'auto';
+    searchResults.style.background = 'white';
+    searchResults.style.border = '1px solid #ccc';
+    searchResults.style.borderRadius = '0 0 4px 4px';
+    searchResults.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
+    searchResults.style.zIndex = '1000';
     
-    // Insert search results container after search input
-    searchInput.parentNode.insertBefore(searchResults, searchInput.nextSibling);
+    searchContainer.appendChild(searchResults);
+    console.log("Search results container added to DOM");
     
-    // Function to perform search
+    // Debounce function to limit API calls
+    function debounce(func, wait) {
+        let timeout;
+        return function(...args) {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(this, args), wait);
+        };
+    }
+    
+    // Perform search with debounce
     const performSearch = debounce(function(query) {
+        console.log("Performing search for:", query);
+        
         if (query.length < 3) {
             searchResults.style.display = 'none';
             return;
         }
         
-        // Show loading indicator
-        searchResults.innerHTML = '<div class="search-loading">Searching...</div>';
+        // Show loading
+        searchResults.innerHTML = '<div style="padding:10px;color:#666;font-style:italic;">Searching...</div>';
         searchResults.style.display = 'block';
         
-        // Call Nominatim API
+        console.log("Fetching from Nominatim:", query);
+        // API call
         fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`)
-            .then(response => response.json())
+            .then(response => {
+                console.log("API response status:", response.status);
+                return response.json();
+            })
             .then(data => {
+                console.log("Search results:", data.length, "items");
                 searchResults.innerHTML = '';
                 
                 if (data.length === 0) {
-                    searchResults.innerHTML = '<div class="search-no-results">No results found</div>';
+                    searchResults.innerHTML = '<div style="padding:10px;color:#666;font-style:italic;">No results found</div>';
                     return;
                 }
                 
-                // Display results (limit to 5)
+                // Create results
                 data.slice(0, 5).forEach(result => {
-                    const resultItem = document.createElement('div');
-                    resultItem.className = 'search-result-item';
-                    resultItem.textContent = result.display_name;
+                    const item = document.createElement('div');
+                    item.style.padding = '10px';
+                    item.style.borderBottom = '1px solid #eee';
+                    item.style.cursor = 'pointer';
+                    item.textContent = result.display_name;
                     
-                    resultItem.addEventListener('click', function() {
-                        // Set input value
+                    item.addEventListener('mouseover', function() {
+                        this.style.backgroundColor = '#f5f5f5';
+                    });
+                    
+                    item.addEventListener('mouseout', function() {
+                        this.style.backgroundColor = '';
+                    });
+                    
+                    item.addEventListener('click', function() {
+                        console.log("Search result clicked:", result.display_name);
                         searchInput.value = result.display_name;
-                        
-                        // Hide results
                         searchResults.style.display = 'none';
                         
-                        // Set map view
                         const center = [parseFloat(result.lat), parseFloat(result.lon)];
+                        console.log("Setting map view to:", center);
                         map.setView(center, 13);
                         
-                        // Add marker
                         if (window.searchMarker) {
                             map.removeLayer(window.searchMarker);
                         }
@@ -176,60 +253,63 @@ function setupEnhancedSearch() {
                             .bindPopup(`Search: ${result.display_name}`)
                             .openPopup();
                         
-                        // Trigger distance sorting
                         sortCards('distance');
                     });
                     
-                    searchResults.appendChild(resultItem);
+                    searchResults.appendChild(item);
                 });
                 
-                searchResults.style.display = 'block';
+                console.log("Results displayed");
             })
             .catch(error => {
-                console.error("Error in geocoding request:", error);
-                searchResults.innerHTML = '<div class="search-error">Error searching. Please try again.</div>';
+                console.error("Search error:", error);
+                searchResults.innerHTML = '<div style="padding:10px;color:#e74c3c;">Error searching. Try again.</div>';
             });
-    }, 300); // 300ms debounce
+    }, 300);
     
-    // Listen for input changes
+    // Input handler
     searchInput.addEventListener('input', function() {
         const query = this.value.trim();
+        console.log("Search input changed:", query);
         performSearch(query);
     });
     
-    // Hide results when clicking outside
+    // Close results when clicking elsewhere
     document.addEventListener('click', function(e) {
-        if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+        if (e.target !== searchInput && !searchResults.contains(e.target)) {
             searchResults.style.display = 'none';
         }
     });
     
     // Handle search button click
-    const searchButton = document.getElementById('search-button');
     if (searchButton) {
         searchButton.addEventListener('click', function() {
             const query = searchInput.value.trim();
+            console.log("Search button clicked with query:", query);
             if (query) {
                 performSearch(query);
             }
         });
     }
     
-    // Handle form submission (e.g., when user presses Enter)
+    // Handle Enter key
     searchInput.addEventListener('keydown', function(e) {
         if (e.key === 'Enter') {
             e.preventDefault();
             const query = this.value.trim();
+            console.log("Enter key pressed with query:", query);
             if (query) {
                 performSearch(query);
-                searchResults.style.display = 'none';
             }
         }
     });
+    
+    console.log("Enhanced search setup complete");
 }
 
 // Set up sorting functionality
 function setupSorting() {
+    console.log("Setting up sorting...");
     const sortSelect = document.getElementById('sort-select');
     if (sortSelect) {
         // Set initial sort
@@ -237,8 +317,12 @@ function setupSorting() {
 
         // Add change event listener
         sortSelect.addEventListener('change', function() {
+            console.log("Sort changed to:", this.value);
             sortCards(this.value);
         });
+        console.log("Sorting setup complete");
+    } else {
+        console.warn("Sort select element not found");
     }
 }
 
