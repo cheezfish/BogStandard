@@ -27,13 +27,16 @@ layout: default
 
     <div class="cards" id="cards-container">
         {% for note in site.notes %}
+            {% assign location_string = note.location | join: ',' %}
+            {% assign map_url = "https://www.google.com/maps?q=" | append: location_string %}
+    
             <div class="card" 
-                data-location="{{ note.location | join: ',' }}" 
+                data-location="{{ location_string }}" 
                 data-title="{{ note.title }}"
                 data-rating="{{ note.rating }}"
                 data-date="{{ note.date }}">
                 <h2>{{ note.title }}</h2>
-                <p><strong>Location:</strong> {{ note.location | join: ', ' }}</p>
+                <p><a href="{{ map_url }}" target="_blank">Go there</a></p>
                 <p><strong>Shits given:</strong> <span class="rating-emojis" data-rating="{{ note.rating }}"></span></p>
                 <p><strong>Features:</strong> {{ note.features | join: ', ' }}</p>
                 <p><strong>Date:</strong> {{ note.date | date: "%d-%m-%Y" }}</p>
