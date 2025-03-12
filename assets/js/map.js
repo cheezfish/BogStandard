@@ -546,7 +546,7 @@ document.getElementById('toilet-form').addEventListener('submit', function(event
         }
     }).then(response => {
         if (response.ok) {
-            alert('Toilet added successfully!');
+            alert('Toilet submitted! Standby for approval');
             document.getElementById('toilet-form-modal').style.display = 'none';
             document.getElementById('toilet-form').reset();
         } else {
