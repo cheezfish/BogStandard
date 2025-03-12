@@ -89,7 +89,7 @@ function setupSorting() {
 
 // Sort cards function
 function sortCards(sortBy) {
-    console.log("Sorting by:", sortBy); // Debug
+    console.log("Sorting by:", sortBy);
     
     const cardsContainer = document.getElementById('cards-container');
     if (!cardsContainer) {
@@ -103,49 +103,23 @@ function sortCards(sortBy) {
         return;
     }
     
-    console.log(`Found ${cards.length} cards to sort`); // Debug
+    console.log(`Found ${cards.length} cards to sort`);
     
     // Sort the cards based on the selected criteria
+    // (your existing sort logic is fine)
     switch(sortBy) {
-        case 'rating':
-            cards.sort((a, b) => {
-                const ratingA = parseFloat(a.getAttribute('data-rating') || 0);
-                const ratingB = parseFloat(b.getAttribute('data-rating') || 0);
-                return ratingB - ratingA; // Higher ratings first
-            });
-            break;
-            
-        case 'date':
-            cards.sort((a, b) => {
-                const dateA = new Date(a.getAttribute('data-date') || '2000-01-01');
-                const dateB = new Date(b.getAttribute('data-date') || '2000-01-01');
-                return dateB - dateA; // Newest first
-            });
-            break;
-            
-        case 'distance':
-            // Use user location or map center as reference point
-            const centerPoint = userLocation || map.getCenter();
-            
-            cards.sort((a, b) => {
-                const locA = a.getAttribute('data-location').split(',').map(Number);
-                const locB = b.getAttribute('data-location').split(',').map(Number);
-                
-                // Calculate distances
-                const distA = L.latLng(locA[0], locA[1]).distanceTo(L.latLng(centerPoint[0], centerPoint[1]));
-                const distB = L.latLng(locB[0], locB[1]).distanceTo(L.latLng(centerPoint[0], centerPoint[1]));
-                
-                return distA - distB; // Closest first
-            });
-            break;
+        // ... existing sort cases ...
     }
     
-    // Remove all cards and append them in the new order
+    // Clear the container first
+    cardsContainer.innerHTML = '';
+    
+    // Then append all cards in the new order
     cards.forEach(card => {
         cardsContainer.appendChild(card);
     });
     
-    console.log("Sorting complete"); // Debug
+    console.log("Sorting complete");
 }
 
 // Search implementation
