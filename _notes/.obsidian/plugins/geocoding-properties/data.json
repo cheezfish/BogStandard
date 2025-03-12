@@ -1,0 +1,32 @@
+{
+  "properties": {
+    "address": {
+      "frontmatterKey": "address",
+      "enabled": false
+    },
+    "lat": {
+      "frontmatterKey": "lat",
+      "enabled": false
+    },
+    "lng": {
+      "frontmatterKey": "lng",
+      "enabled": false
+    },
+    "location": {
+      "frontmatterKey": "location",
+      "enabled": true
+    },
+    "map_link": {
+      "frontmatterKey": "map_link",
+      "enabled": false
+    },
+    "map_view_link": {
+      "frontmatterKey": "map_view_link",
+      "enabled": false
+    }
+  },
+  "overrideExistingProperties": true,
+  "mapLinkProvider": "google",
+  "apiProvider": "free-geocoding-api",
+  "apiKey": "67d155bfb1cdd574833398xws3649b2"
+}
