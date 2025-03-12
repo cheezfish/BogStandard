@@ -1,5 +1,5 @@
 ---
-title: Washington Monument
+title: "Washington Monument"
 location:
   - "38.889483049999996"
   - "-77.03525005547871"
