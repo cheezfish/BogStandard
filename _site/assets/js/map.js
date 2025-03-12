@@ -161,6 +161,17 @@ function setupEnhancedSearch() {
 
     // Perform search with debounce
     const performSearch = debounce(function(query) {
+        if (query.length === 0) {
+            // If the search box is empty, show all markers and reset the map
+            markers.forEach(markerData => {
+                markerData.marker.addTo(map);
+                markerData.card.style.display = 'block';
+            });
+            map.setView(defaultLocation, 13); // Reset to default location and zoom
+            searchResults.style.display = 'none';
+            return;
+        }
+
         if (query.length < 3) {
             searchResults.style.display = 'none';
             return;
@@ -250,6 +261,13 @@ function setupRadiusFilter() {
             if (!isNaN(radius) && radius > 0) {
                 const center = map.getCenter();
                 filterByRadius([center.lat, center.lng], radius);
+            } else {
+                // If radius is empty or invalid, show all markers
+                markers.forEach(markerData => {
+                    markerData.marker.addTo(map);
+                    markerData.card.style.display = 'block';
+                });
+                map.setView(defaultLocation, 13); // Reset to default location and zoom
             }
         });
     }
@@ -261,8 +279,16 @@ function filterByRadius(center, radius) {
     if (!radiusInput) return;
 
     radius = radius || parseFloat(radiusInput.value);
-    if (isNaN(radius) || radius <= 0) return;
+    if (isNaN(radius) || radius <= 0) {
+        // If no radius is set, show all markers and reset the map view
+        markers.forEach(markerData => {
+            markerData.marker.addTo(map);
+            markerData.card.style.display = 'block';
+        });
+        return;
+    }
 
+    // Filter markers based on the radius
     markers.forEach(markerData => {
         const distance = calculateDistance(center[0], center[1], markerData.location[0], markerData.location[1]);
         if (distance <= radius * 1000) {
@@ -273,6 +299,20 @@ function filterByRadius(center, radius) {
             markerData.card.style.display = 'none';
         }
     });
+
+    // Adjust the map's zoom level based on the radius
+    const zoomLevel = calculateZoomLevel(radius);
+    map.setView(center, zoomLevel);
+}
+
+// Helper function to calculate zoom level based on radius
+function calculateZoomLevel(radius) {
+    // Adjust these values based on your desired zoom behavior
+    if (radius <= 1) return 15; // Very close zoom
+    if (radius <= 5) return 13; // Close zoom
+    if (radius <= 10) return 11; // Medium zoom
+    if (radius <= 20) return 9; // Wide zoom
+    return 7; // Very wide zoom
 }
 
 // Function to calculate distance (Haversine formula)
@@ -357,4 +397,12 @@ function sortCards(sortBy) {
     });
 }
 
-searchResults.style.border = '2px solid red'; // Add this line
+function getRatingEmojis(rating) {
+    const poopEmoji = '💩';
+    return poopEmoji.repeat(rating);
+}
+
+// Update the card rendering in addMarkers
+const rating = card.getAttribute('data-rating');
+const ratingEmojis = getRatingEmojis(rating);
+card.querySelector('.rating-emojis').textContent = ratingEmojis;

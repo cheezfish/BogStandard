@@ -186,3 +186,8 @@ h1 {
         flex: 1;
     }
 }
+
+.rating-emojis {
+    font-size: 1.2em;
+    color: #8B4513; /* Brown color for poop emojis */
+}

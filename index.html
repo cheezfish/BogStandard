@@ -34,7 +34,7 @@ layout: default
                 data-date="{{ note.date }}">
                 <h2>{{ note.title }}</h2>
                 <p><strong>Location:</strong> {{ note.location | join: ', ' }}</p>
-                <p><strong>Rating:</strong> {{ note.rating }}/5</p>
+                <p><strong>Rating:</strong> <span class="rating-emojis">{{ note.rating }}</span></p>
                 <p><strong>Features:</strong> {{ note.features | join: ', ' }}</p>
                 <p><strong>Date:</strong> {{ note.date }}</p>
                 <div class="content">
